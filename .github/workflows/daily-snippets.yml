@@ -1,5 +1,6 @@
 name: Generate daily snippets
 
+# Workflow to generate and commit daily Python code snippets
 permissions:
   contents: write
 
