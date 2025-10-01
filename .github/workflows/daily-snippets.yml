@@ -11,6 +11,7 @@ on:
 jobs:
   generate:
     runs-on: ubuntu-latest
+    environment: daily-python
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,8 +33,11 @@ jobs:
         run: |
           python generate_daily.py --commit --message "chore: add daily snippet from action"
 
-      - name: Push changes (using GITHUB_TOKEN)
+      - name: Push changes (using PAT)
+        env:
+          PAT: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
           set -e
-          echo "Pushing changes using GITHUB_TOKEN (actions/checkout persisted credentials)"
+          echo "Configuring git with PAT for push..."
+          git remote set-url origin https://x-access-token:${PAT}@github.com/${{ github.repository }}.git
           git push origin HEAD:${{ github.ref_name }}
