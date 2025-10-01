@@ -1,5 +1,8 @@
 name: Generate daily snippets
 
+permissions:
+  contents: write
+
 on:
   schedule:
     - cron: '0 9 * * *' # run daily at 09:00 UTC (adjust as needed)
@@ -11,20 +14,34 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # allow pushing back using the token provided to the runner
+          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
       - name: Create daily snippet
         run: |
           python generate_daily.py --commit --message "chore: add daily snippet from action"
 
-      - name: Push changes
-        if: secrets.PERSONAL_ACCESS_TOKEN != ''
+      - name: Push using PERSONAL_ACCESS_TOKEN (if provided)
+        if: ${{ secrets.PERSONAL_ACCESS_TOKEN != '' }}
         env:
           TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
           git remote set-url origin https://x-access-token:${TOKEN}@github.com/${{ github.repository }}.git
-          git push origin HEAD:${{ github.ref }}
+          git push origin HEAD:${{ github.ref_name }}
+
+      - name: Push using GITHUB_TOKEN (fallback)
+        if: ${{ secrets.PERSONAL_ACCESS_TOKEN == '' }}
+        run: |
+          # actions/checkout with persist-credentials makes GITHUB_TOKEN available for pushing
+          git push origin HEAD:${{ github.ref_name }}
