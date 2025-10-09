@@ -27,8 +27,11 @@ A comprehensive list of Python projects from beginner to advanced level. Track y
    - Key concepts: File I/O, Data persistence
    - Difficulty: Easy
 
-4. [ ] Todo List (GUI or CLI)
-   - Key concepts: Basic data structures, User input
+4. [x] Todo List (GUI and CLI)
+   - Status: Completed
+   - Directory: `/todolist-app`
+   - Features: Data persistence, Categories, Priorities, Due dates
+   - Key concepts: Basic data structures, User input, GUI
    - Difficulty: Easy
 
 5. [ ] Number guessing game
