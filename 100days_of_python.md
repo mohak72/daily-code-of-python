@@ -3,9 +3,9 @@
 A comprehensive list of Python projects from beginner to advanced level. Track your progress and enhance your Python skills through practical applications.
 
 ## Progress Tracking
-- [ ] Projects Completed: 0/100
+- [ ] Projects Completed: 1/100
 - [ ] Current Project: Number guessing game
-- [ ] Days Completed: 0/100
+- [ ] Days Completed: 1/100
 
 ## Project List
 
@@ -34,7 +34,7 @@ A comprehensive list of Python projects from beginner to advanced level. Track y
    - Key concepts: Basic data structures, User input, GUI
    - Difficulty: Easy
 
-5. [ ] Number guessing game
+5. [x] Number guessing game
    - Key concepts: Random numbers, Loops
    - Difficulty: Easy
 

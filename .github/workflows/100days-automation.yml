@@ -1,0 +1,80 @@
+name: 100 Days of Code - Automation
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform'
+        required: true
+        type: choice
+        options:
+          - start-day
+          - complete-day
+      project_number:
+        description: 'Project number (optional, auto-detected if empty)'
+        required: false
+        type: string
+
+jobs:
+  manage-100days:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Install dependencies
+        run: |
+          pip install pyyaml
+
+      - name: Run 100 Days Helper Script
+        id: helper
+        run: |
+          python .github/scripts/100days_helper.py ${{ github.event.inputs.action }} ${{ github.event.inputs.project_number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Pull Request (if completing day)
+        if: github.event.inputs.action == 'complete-day'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'feat: complete day ${{ steps.helper.outputs.day_number }} - ${{ steps.helper.outputs.project_name }}'
+          branch: ${{ steps.helper.outputs.branch_name }}
+          title: 'Day ${{ steps.helper.outputs.day_number }}: ${{ steps.helper.outputs.project_name }}'
+          body: |
+            ## 100 Days of Code - Day ${{ steps.helper.outputs.day_number }}
+
+            ### Project: ${{ steps.helper.outputs.project_name }}
+
+            **Status:** ✅ Completed
+
+            ### What I Built
+            ${{ steps.helper.outputs.project_description }}
+
+            ### Key Learnings
+            - Add your learnings here
+
+            ### Screenshots/Demo
+            - Add screenshots or demo links here
+
+            ---
+            *Auto-generated PR for 100 Days of Code challenge*
+          labels: |
+            100-days-of-code
+            enhancement
