@@ -4,7 +4,7 @@ A comprehensive list of Python projects from beginner to advanced level. Track y
 
 ## Progress Tracking
 - [ ] Projects Completed: 0/100
-- [ ] Current Project: None
+- [ ] Current Project: Number guessing game
 - [ ] Days Completed: 0/100
 
 ## Project List
