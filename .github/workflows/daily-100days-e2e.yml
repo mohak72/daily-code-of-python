@@ -1,0 +1,208 @@
+name: 100 Days of Code - Full E2E Automation
+
+on:
+  # Run daily at 9 AM UTC (adjust to your timezone)
+  schedule:
+    - cron: '0 9 * * *'
+
+  # Allow manual trigger
+  workflow_dispatch:
+    inputs:
+      project_number:
+        description: 'Project number (leave empty for auto-detect)'
+        required: false
+        type: string
+      skip_build:
+        description: 'Skip project building (testing only)'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  daily-project-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest pytest-cov
+
+      - name: Start new day
+        id: start_day
+        run: |
+          PROJECT_NUM="${{ github.event.inputs.project_number }}"
+          python .github/scripts/100days_helper.py start-day $PROJECT_NUM
+        continue-on-error: false
+
+      - name: Get current project info
+        id: project_info
+        run: |
+          # Get current branch to extract project number
+          BRANCH=$(git branch --show-current)
+          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+
+          # Extract project number from branch name (day-05-project-name -> 05)
+          PROJECT_NUM=$(echo $BRANCH | grep -oP 'day-\K\d+' || echo "")
+          echo "project_number=$PROJECT_NUM" >> $GITHUB_OUTPUT
+
+          echo "Current branch: $BRANCH"
+          echo "Project number: $PROJECT_NUM"
+
+      - name: Build project structure
+        id: build_structure
+        run: |
+          PROJECT_NUM=${{ steps.project_info.outputs.project_number }}
+          python .github/scripts/ai_project_builder.py build $PROJECT_NUM
+
+      - name: Build project with AI
+        id: build_project
+        if: ${{ !inputs.skip_build }}
+        run: |
+          # Find the project directory (it was created by ai_project_builder)
+          PROJECT_NUM=${{ steps.project_info.outputs.project_number }}
+
+          # Get project directory from spec
+          PROJECT_DIR=$(python -c "
+          import json
+          with open('.github/data/project-specs.json') as f:
+              data = json.load(f)
+              for proj in data['projects']:
+                  if proj['id'] == int('$PROJECT_NUM'):
+                      print(proj['directory'])
+                      break
+          ")
+
+          echo "Building project in: $PROJECT_DIR"
+
+          if [ -d "$PROJECT_DIR" ]; then
+            python .github/scripts/claude_builder.py "$PROJECT_DIR"
+          else
+            echo "Project directory not found: $PROJECT_DIR"
+            exit 1
+          fi
+
+      - name: Install project dependencies
+        run: |
+          PROJECT_NUM=${{ steps.project_info.outputs.project_number }}
+          PROJECT_DIR=$(python -c "
+          import json
+          with open('.github/data/project-specs.json') as f:
+              data = json.load(f)
+              for proj in data['projects']:
+                  if proj['id'] == int('$PROJECT_NUM'):
+                      print(proj['directory'])
+                      break
+          ")
+
+          if [ -f "$PROJECT_DIR/requirements.txt" ]; then
+            pip install -r "$PROJECT_DIR/requirements.txt"
+          fi
+
+      - name: Run tests
+        id: run_tests
+        continue-on-error: true
+        run: |
+          PROJECT_NUM=${{ steps.project_info.outputs.project_number }}
+          python .github/scripts/ai_project_builder.py test $PROJECT_NUM
+
+      - name: Complete day
+        id: complete_day
+        if: steps.run_tests.outcome == 'success'
+        run: |
+          PROJECT_NUM=${{ steps.project_info.outputs.project_number }}
+          python .github/scripts/100days_helper.py complete-day $PROJECT_NUM
+
+      - name: Create Pull Request
+        if: steps.run_tests.outcome == 'success'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ steps.project_info.outputs.branch }}
+          title: 'Day ${{ steps.project_info.outputs.project_number }}: Auto-completed project'
+          body: |
+            ## 🤖 Auto-Generated Project - Day ${{ steps.project_info.outputs.project_number }}
+
+            This project was automatically built by the 100 Days of Code automation system.
+
+            ### ✅ Status
+            - [x] Project structure created
+            - [x] Code implemented
+            - [x] Tests passing
+            - [x] Documentation generated
+
+            ### 📝 Next Steps
+            1. Review the generated code
+            2. Test the application manually
+            3. Add any additional features if desired
+            4. Merge when satisfied
+
+            ### 🧪 Test Results
+            All automated tests passed ✅
+
+            ---
+            *🤖 Auto-generated by 100 Days of Code E2E Automation*
+            *Powered by AI-assisted development*
+          labels: |
+            100-days-of-code
+            automated-build
+            enhancement
+
+      - name: Handle test failures
+        if: steps.run_tests.outcome == 'failure'
+        run: |
+          echo "⚠️  Tests failed! Manual intervention required."
+          echo "The project has been created but needs fixes before completion."
+          echo "Branch: ${{ steps.project_info.outputs.branch }}"
+
+          # Create an issue for failed tests
+          gh issue create \
+            --title "Day ${{ steps.project_info.outputs.project_number }}: Tests Failed - Manual Review Needed" \
+            --body "The automated build for day ${{ steps.project_info.outputs.project_number }} completed but tests are failing.
+
+          **Branch:** \`${{ steps.project_info.outputs.branch }}\`
+
+          Please review the test failures and fix the code manually.
+
+          Once fixed, run:
+          \`\`\`bash
+          python 100days.py complete
+          \`\`\`
+          " \
+            --label "100-days-of-code,bug,help-wanted"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### 100 Days of Code - Daily Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Project Number:** ${{ steps.project_info.outputs.project_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ steps.project_info.outputs.branch }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Tests:** ${{ steps.run_tests.outcome }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ steps.run_tests.outcome }}" == "success" ]; then
+            echo "✅ **Status:** Project completed and PR created!" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️  **Status:** Manual intervention required" >> $GITHUB_STEP_SUMMARY
+          fi

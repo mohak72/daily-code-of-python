@@ -1,0 +1,240 @@
+{
+  "projects": [
+    {
+      "id": 5,
+      "name": "Number guessing game",
+      "directory": "number-guessing-game",
+      "difficulty": "Easy",
+      "type": "CLI",
+      "description": "A command-line game where the computer generates a random number and the player tries to guess it",
+      "requirements": [
+        "Generate a random number between 1 and 100",
+        "Prompt user to guess the number",
+        "Provide feedback: 'Too high', 'Too low', or 'Correct!'",
+        "Track the number of attempts",
+        "Display the number of attempts when the user wins",
+        "Ask if the user wants to play again",
+        "Handle invalid inputs gracefully"
+      ],
+      "features": [
+        "Difficulty levels (easy: 1-50, medium: 1-100, hard: 1-200)",
+        "High score tracking",
+        "Hints system (closer/farther)"
+      ],
+      "tech_stack": ["Python 3.8+", "random module"],
+      "test_cases": [
+        "Test random number generation within range",
+        "Test input validation (non-numeric, out of range)",
+        "Test win condition",
+        "Test attempt counting"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Rock-Paper-Scissors game",
+      "directory": "rock-paper-scissors",
+      "difficulty": "Easy",
+      "type": "CLI",
+      "description": "Classic rock-paper-scissors game against the computer",
+      "requirements": [
+        "Display menu options: Rock, Paper, Scissors",
+        "Get user choice",
+        "Generate random computer choice",
+        "Determine winner based on rules",
+        "Display both choices and the result",
+        "Keep score across multiple rounds",
+        "Option to quit or play again"
+      ],
+      "features": [
+        "Best of 3/5/7 modes",
+        "Win/Loss/Draw statistics",
+        "ASCII art for choices"
+      ],
+      "tech_stack": ["Python 3.8+", "random module"],
+      "test_cases": [
+        "Test all win conditions",
+        "Test all lose conditions",
+        "Test draw conditions",
+        "Test score tracking"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Password generator",
+      "directory": "password-generator",
+      "difficulty": "Easy",
+      "type": "CLI",
+      "description": "Generate secure random passwords with customizable options",
+      "requirements": [
+        "Generate passwords with specified length",
+        "Include uppercase, lowercase, numbers, and special characters",
+        "Allow users to choose character types to include",
+        "Display password strength indicator",
+        "Option to generate multiple passwords at once",
+        "Copy to clipboard functionality (optional)"
+      ],
+      "features": [
+        "Password strength meter",
+        "Memorable password option (using words)",
+        "Exclude ambiguous characters option",
+        "Save to file"
+      ],
+      "tech_stack": ["Python 3.8+", "random module", "string module"],
+      "test_cases": [
+        "Test password length validation",
+        "Test character type inclusion",
+        "Test password uniqueness",
+        "Test strength calculation"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "BMI calculator",
+      "directory": "bmi-calculator",
+      "difficulty": "Easy",
+      "type": "CLI + GUI",
+      "description": "Calculate Body Mass Index and provide health category",
+      "requirements": [
+        "Accept weight (kg or lbs) and height (cm or inches)",
+        "Calculate BMI using formula: weight / (height^2)",
+        "Display BMI value and category",
+        "Categories: Underweight, Normal, Overweight, Obese",
+        "Support both metric and imperial units",
+        "Input validation",
+        "Save history of calculations"
+      ],
+      "features": [
+        "GUI version using tkinter",
+        "BMI trends over time",
+        "Ideal weight range calculator",
+        "Visual chart/graph"
+      ],
+      "tech_stack": ["Python 3.8+", "tkinter (for GUI)"],
+      "test_cases": [
+        "Test BMI calculation accuracy",
+        "Test unit conversion",
+        "Test category classification",
+        "Test input validation"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Digital clock",
+      "directory": "digital-clock",
+      "difficulty": "Easy",
+      "type": "GUI",
+      "description": "Display current time in digital format with GUI",
+      "requirements": [
+        "Display current time (HH:MM:SS)",
+        "Update time every second",
+        "Show date (optional)",
+        "12-hour and 24-hour format toggle",
+        "Customizable appearance (font, color)",
+        "Always on top option"
+      ],
+      "features": [
+        "Multiple time zones",
+        "Alarm functionality",
+        "Stopwatch mode",
+        "Timer mode"
+      ],
+      "tech_stack": ["Python 3.8+", "tkinter", "datetime module"],
+      "test_cases": [
+        "Test time accuracy",
+        "Test format switching",
+        "Test update frequency"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "Countdown timer",
+      "directory": "countdown-timer",
+      "difficulty": "Easy",
+      "type": "GUI",
+      "description": "Set and run countdown timers with notifications",
+      "requirements": [
+        "Input time (hours, minutes, seconds)",
+        "Start/Pause/Reset functionality",
+        "Display remaining time",
+        "Alert when timer reaches zero (sound + notification)",
+        "Preset timer options (5min, 15min, 30min, 1hr)",
+        "Save custom presets"
+      ],
+      "features": [
+        "Multiple simultaneous timers",
+        "Pomodoro mode (25min work + 5min break)",
+        "Timer history",
+        "Custom alarm sounds"
+      ],
+      "tech_stack": ["Python 3.8+", "tkinter", "playsound or winsound"],
+      "test_cases": [
+        "Test countdown accuracy",
+        "Test pause/resume functionality",
+        "Test notification trigger",
+        "Test reset functionality"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "Expense tracker",
+      "directory": "expense-tracker",
+      "difficulty": "Medium",
+      "type": "CLI + GUI",
+      "description": "Track daily expenses with categories and visualization",
+      "requirements": [
+        "Add expense (amount, category, description, date)",
+        "View all expenses",
+        "Filter by date range or category",
+        "Calculate total expenses",
+        "Save data to file (JSON/CSV)",
+        "Load previous data",
+        "Generate basic reports"
+      ],
+      "features": [
+        "Budget setting and alerts",
+        "Expense categories (food, transport, entertainment, etc.)",
+        "Monthly/weekly summaries",
+        "Data visualization (charts using matplotlib)",
+        "Export to CSV"
+      ],
+      "tech_stack": ["Python 3.8+", "matplotlib", "pandas (optional)", "json"],
+      "test_cases": [
+        "Test expense addition",
+        "Test data persistence",
+        "Test filtering",
+        "Test calculation accuracy"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "Tic-Tac-Toe game",
+      "directory": "tic-tac-toe",
+      "difficulty": "Medium",
+      "type": "CLI",
+      "description": "Classic Tic-Tac-Toe game with AI opponent",
+      "requirements": [
+        "Display 3x3 game board",
+        "Two-player mode",
+        "Player vs Computer mode",
+        "Input validation (valid position, not occupied)",
+        "Check for win conditions (rows, columns, diagonals)",
+        "Check for draw condition",
+        "Display winner or draw message",
+        "Option to play again"
+      ],
+      "features": [
+        "AI with different difficulty levels",
+        "Minimax algorithm for unbeatable AI",
+        "Score tracking across multiple games",
+        "Undo move option"
+      ],
+      "tech_stack": ["Python 3.8+"],
+      "test_cases": [
+        "Test all win conditions",
+        "Test draw detection",
+        "Test input validation",
+        "Test AI move generation"
+      ]
+    }
+  ]
+}

@@ -1,5 +1,6 @@
-# Ignore .bmad-core folder
+# Ignore .bmad-core and .claude folders
 .bmad-core/
+.claude/
 
 # Python
 __pycache__/

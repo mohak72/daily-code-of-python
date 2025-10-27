@@ -35,6 +35,10 @@ Usage: python 100days.py <command> [options]
 Commands:
   start          Start a new day (auto-detects next project)
   start N        Start day N (specific project number)
+  build          Build current project with AI (auto-implements code)
+  build N        Build specific project N with AI
+  test           Run tests for current project
+  test N         Run tests for specific project N
   complete       Complete current day and prepare PR
   status         Show current progress
   list           List all projects
@@ -43,14 +47,22 @@ Commands:
 Examples:
   python 100days.py start          # Start next project
   python 100days.py start 5        # Start project #5
+  python 100days.py build          # Auto-build current project
+  python 100days.py test           # Run tests
   python 100days.py complete       # Mark current project as done
   python 100days.py status         # See your progress
 
-Workflow:
+Workflow (Manual):
   1. Run 'start' to begin a new day
-  2. Code your project
-  3. Run 'complete' when done
-  4. Create PR manually or via GitHub Actions
+  2. Code your project manually
+  3. Run 'test' to verify
+  4. Run 'complete' when done
+
+Workflow (Automated):
+  1. Run 'start' to begin a new day
+  2. Run 'build' to auto-generate code with AI
+  3. Run 'test' to verify
+  4. Run 'complete' when done
 """)
 
 
@@ -139,6 +151,78 @@ def main():
             print_banner()
             project, branch = helper.start_day(project_num)
             print(f"\n💡 Tip: Run 'python 100days.py complete' when you're done!")
+
+        elif command == 'build':
+            project_num = int(sys.argv[2]) if len(sys.argv) > 2 else None
+            print_banner()
+
+            # Run AI project builder
+            if not project_num:
+                # Get current project from branch
+                result = subprocess.run(['git', 'branch', '--show-current'],
+                                      capture_output=True, text=True)
+                branch = result.stdout.strip()
+                import re
+                match = re.match(r'day-(\d+)-', branch)
+                if match:
+                    project_num = int(match.group(1))
+                else:
+                    print("❌ Could not detect project number. Please specify: python 100days.py build N")
+                    sys.exit(1)
+
+            print(f"🤖 Building project {project_num} with AI...")
+
+            # Build project structure
+            result = subprocess.run(['python', '.github/scripts/ai_project_builder.py', 'build', str(project_num)])
+            if result.returncode != 0:
+                print("❌ Failed to build project structure")
+                sys.exit(1)
+
+            # Auto-implement with AI
+            import json
+            with open('.github/data/project-specs.json', 'r') as f:
+                data = json.load(f)
+                project_dir = None
+                for proj in data['projects']:
+                    if proj['id'] == project_num:
+                        project_dir = proj['directory']
+                        break
+
+            if project_dir:
+                result = subprocess.run(['python', '.github/scripts/claude_builder.py', project_dir])
+                if result.returncode == 0:
+                    print(f"\n✅ Project built successfully!")
+                    print(f"💡 Next: Run 'python 100days.py test' to verify")
+                else:
+                    print("⚠️  Build completed with issues. Check the output above.")
+
+        elif command == 'test':
+            project_num = int(sys.argv[2]) if len(sys.argv) > 2 else None
+            print_banner()
+
+            if not project_num:
+                # Get current project from branch
+                result = subprocess.run(['git', 'branch', '--show-current'],
+                                      capture_output=True, text=True)
+                branch = result.stdout.strip()
+                import re
+                match = re.match(r'day-(\d+)-', branch)
+                if match:
+                    project_num = int(match.group(1))
+
+            if not project_num:
+                print("❌ Could not detect project number. Please specify: python 100days.py test N")
+                sys.exit(1)
+
+            print(f"🧪 Running tests for project {project_num}...")
+            result = subprocess.run(['python', '.github/scripts/ai_project_builder.py', 'test', str(project_num)])
+
+            if result.returncode == 0:
+                print(f"\n✅ All tests passed!")
+                print(f"💡 Next: Run 'python 100days.py complete' to finish")
+            else:
+                print(f"\n❌ Tests failed. Fix issues and try again.")
+                sys.exit(1)
 
         elif command == 'complete':
             project_num = int(sys.argv[2]) if len(sys.argv) > 2 else None
