@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 100 Days of Code Helper Script
 Automates branch creation, tracking updates, and PR management
@@ -10,6 +11,13 @@ import subprocess
 from pathlib import Path
 from datetime import datetime
 from typing import Optional, Tuple
+
+# Fix Windows console encoding
+if sys.platform == 'win32':
+    import codecs
+    if hasattr(sys.stdout, 'buffer'):
+        sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'strict')
+        sys.stderr = codecs.getwriter('utf-8')(sys.stderr.buffer, 'strict')
 
 
 class Project:
@@ -164,7 +172,7 @@ class HundredDaysHelper:
         if not project:
             raise Exception("No uncompleted projects found!")
 
-        print(f"\n🚀 Starting Day {project.number}: {project.name}")
+        print(f"\n>> Starting Day {project.number}: {project.name}")
 
         # Create branch
         branch_name = self.create_branch(project)
@@ -180,8 +188,8 @@ class HundredDaysHelper:
         except subprocess.CalledProcessError:
             print("Note: No changes to commit for tracking file")
 
-        print(f"✅ Ready to code! Work in branch: {branch_name}")
-        print(f"📁 Project directory: {project.directory}")
+        print(f"[OK] Ready to code! Work in branch: {branch_name}")
+        print(f"[DIR] Project directory: {project.directory}")
 
         return project, branch_name
 
@@ -214,8 +222,8 @@ class HundredDaysHelper:
         # Commit and push all changes
         self.commit_and_push(project, current_branch)
 
-        print(f"✅ Day {project.number} completed!")
-        print(f"🔀 Ready to create PR from branch: {current_branch}")
+        print(f"[OK] Day {project.number} completed!")
+        print(f"[PR] Ready to create PR from branch: {current_branch}")
 
         # Set GitHub Actions outputs
         print(f"::set-output name=day_number::{project.number}")
@@ -245,7 +253,7 @@ def main():
             print(f"Unknown action: {action}")
             sys.exit(1)
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"[ERROR] Error: {e}")
         sys.exit(1)
 
 

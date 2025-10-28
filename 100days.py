@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 100 Days of Code - Local CLI Tool
 Quick commands to manage your daily coding workflow
@@ -8,6 +9,13 @@ import sys
 import subprocess
 import importlib.util
 from pathlib import Path
+
+# Fix Windows console encoding
+if sys.platform == 'win32':
+    import codecs
+    if hasattr(sys.stdout, 'buffer'):
+        sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'strict')
+        sys.stderr = codecs.getwriter('utf-8')(sys.stderr.buffer, 'strict')
 
 # Load the helper module dynamically
 script_path = Path(__file__).parent / '.github' / 'scripts' / '100days_helper.py'
@@ -20,9 +28,9 @@ HundredDaysHelper = days_helper.HundredDaysHelper
 def print_banner():
     """Print welcome banner"""
     print("""
-╔══════════════════════════════════════════════╗
-║     100 DAYS OF PYTHON - Workflow Manager    ║
-╚══════════════════════════════════════════════╝
+================================================
+    100 DAYS OF PYTHON - Workflow Manager
+================================================
 """)
 
 

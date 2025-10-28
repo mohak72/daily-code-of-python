@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 AI-Powered Project Builder for 100 Days of Code
 Automatically generates complete projects based on specifications
@@ -10,6 +11,13 @@ import sys
 import subprocess
 from pathlib import Path
 from typing import Dict, Optional
+
+# Fix Windows console encoding
+if sys.platform == 'win32':
+    import codecs
+    if hasattr(sys.stdout, 'buffer'):
+        sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'strict')
+        sys.stderr = codecs.getwriter('utf-8')(sys.stderr.buffer, 'strict')
 
 
 class AIProjectBuilder:
@@ -173,20 +181,20 @@ htmlcov/
 
         (project_dir / 'requirements.txt').write_text(requirements)
 
-        print(f"✅ Created basic project structure in {project_dir}")
+        print(f"[OK] Created basic project structure in {project_dir}")
 
     def build_project_with_ai(self, project_id: int):
         """Main method to build a project using AI assistance"""
 
         spec = self.get_project_spec(project_id)
         if not spec:
-            print(f"❌ No specification found for project {project_id}")
-            print(f"📋 Available projects: {list(self.specs.keys())}")
+            print(f"[ERROR] No specification found for project {project_id}")
+            print(f"[INFO] Available projects: {list(self.specs.keys())}")
             return False
 
-        print(f"\n🤖 Building Project {project_id}: {spec['name']}")
-        print(f"📂 Directory: {spec['directory']}")
-        print(f"📊 Difficulty: {spec['difficulty']}")
+        print(f"\n[BUILD] Building Project {project_id}: {spec['name']}")
+        print(f"[DIR] Directory: {spec['directory']}")
+        print(f"[INFO] Difficulty: {spec['difficulty']}")
 
         # Create project structure
         project_dir = self.create_project_structure(spec)
@@ -205,9 +213,9 @@ htmlcov/
         with open(spec_file, 'w', encoding='utf-8') as f:
             json.dump(spec, f, indent=2)
 
-        print(f"\n✅ Project structure created!")
+        print(f"\n[OK] Project structure created!")
         print(f"\n{'='*60}")
-        print(f"🎯 NEXT STEP: AI Implementation Required")
+        print(f"[NEXT] NEXT STEP: AI Implementation Required")
         print(f"{'='*60}")
         print(f"\nThe AI prompt has been generated at:")
         print(f"  {prompt_file}")
@@ -221,10 +229,10 @@ htmlcov/
         """Run tests for the project"""
         test_dir = project_dir / 'tests'
         if not test_dir.exists():
-            print(f"⚠️  No tests directory found in {project_dir}")
+            print(f"[WARN] No tests directory found in {project_dir}")
             return False
 
-        print(f"\n🧪 Running tests for {project_dir.name}...")
+        print(f"\n[TEST] Running tests for {project_dir.name}...")
 
         try:
             result = subprocess.run(
@@ -239,14 +247,14 @@ htmlcov/
                 print(result.stderr)
 
             if result.returncode == 0:
-                print(f"✅ All tests passed!")
+                print(f"[OK] All tests passed!")
                 return True
             else:
-                print(f"❌ Some tests failed")
+                print(f"[FAIL] Some tests failed")
                 return False
 
         except FileNotFoundError:
-            print("⚠️  pytest not installed. Install with: pip install pytest pytest-cov")
+            print("[WARN] pytest not installed. Install with: pip install pytest pytest-cov")
             return False
 
 
@@ -281,11 +289,11 @@ Examples:
             success = builder.run_tests(project_dir)
             sys.exit(0 if success else 1)
         else:
-            print(f"❌ Project {project_id} not found")
+            print(f"[ERROR] Project {project_id} not found")
             sys.exit(1)
 
     else:
-        print(f"❌ Unknown command: {command}")
+        print(f"[ERROR] Unknown command: {command}")
         sys.exit(1)
 
 
