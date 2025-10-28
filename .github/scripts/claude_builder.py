@@ -85,10 +85,10 @@ class ClaudeProjectBuilder:
         try:
             impl_func(spec)
             self.create_readme(spec)
-            print(f"\n✅ Project implemented successfully!")
+            print(f"\n[OK] Project implemented successfully!")
             return True
         except Exception as e:
-            print(f"❌ Error during implementation: {e}")
+            print(f"[ERROR] Error during implementation: {e}")
             return False
 
     def implement_number_guessing_game(self, spec: Dict):
@@ -263,7 +263,7 @@ def test_get_difficulty():
         (self.project_dir / 'tests' / 'test_main.py').write_text(test_main)
         (self.project_dir / 'tests' / '__init__.py').write_text('')
 
-        print("✅ Generated Number Guessing Game")
+        print("[OK] Generated Number Guessing Game")
 
     def implement_rock_paper_scissors(self, spec: Dict):
         """Implement Rock Paper Scissors game"""
@@ -388,33 +388,258 @@ def test_determine_winner():
         (self.project_dir / 'tests' / 'test_main.py').write_text(test_code)
         (self.project_dir / 'tests' / '__init__.py').write_text('')
 
-        print("✅ Generated Rock Paper Scissors game")
+        print("[OK] Generated Rock Paper Scissors game")
 
     def implement_password_generator(self, spec: Dict):
         """Implement Password Generator"""
-        # Placeholder - would implement full code
-        print("⚠️  Password Generator - Implementation placeholder")
-        (self.project_dir / 'main.py').write_text('# TODO: Implement password generator\n')
-        (self.project_dir / 'tests' / 'test_main.py').write_text('# TODO: Add tests\n')
+        main_py = '''"""
+Password Generator
+Generate secure random passwords with customizable options
+"""
+
+import random
+import string
+from typing import List
+
+
+def generate_password(length: int = 12, use_uppercase: bool = True,
+                     use_lowercase: bool = True, use_digits: bool = True,
+                     use_special: bool = True) -> str:
+    """Generate a random password based on specified criteria"""
+
+    if length < 4:
+        raise ValueError("Password length must be at least 4 characters")
+
+    char_pool = ""
+    required_chars = []
+
+    if use_lowercase:
+        char_pool += string.ascii_lowercase
+        required_chars.append(random.choice(string.ascii_lowercase))
+
+    if use_uppercase:
+        char_pool += string.ascii_uppercase
+        required_chars.append(random.choice(string.ascii_uppercase))
+
+    if use_digits:
+        char_pool += string.digits
+        required_chars.append(random.choice(string.digits))
+
+    if use_special:
+        char_pool += string.punctuation
+        required_chars.append(random.choice(string.punctuation))
+
+    if not char_pool:
+        raise ValueError("At least one character type must be selected")
+
+    # Fill remaining length with random characters
+    remaining_length = length - len(required_chars)
+    password_chars = required_chars + [random.choice(char_pool) for _ in range(remaining_length)]
+
+    # Shuffle to avoid predictable patterns
+    random.shuffle(password_chars)
+
+    return ''.join(password_chars)
+
+
+def calculate_password_strength(password: str) -> tuple:
+    """Calculate password strength (score out of 5, description)"""
+    score = 0
+    feedback = []
+
+    if len(password) >= 8:
+        score += 1
+    if len(password) >= 12:
+        score += 1
+
+    if any(c.islower() for c in password):
+        score += 0.5
+    if any(c.isupper() for c in password):
+        score += 0.5
+    if any(c.isdigit() for c in password):
+        score += 0.5
+    if any(c in string.punctuation for c in password):
+        score += 0.5
+
+    score = int(score)
+
+    if score <= 1:
+        strength = "Very Weak"
+    elif score == 2:
+        strength = "Weak"
+    elif score == 3:
+        strength = "Medium"
+    elif score == 4:
+        strength = "Strong"
+    else:
+        strength = "Very Strong"
+
+    return score, strength
+
+
+def get_yes_no(prompt: str, default: bool = True) -> bool:
+    """Get yes/no input from user"""
+    default_str = "Y/n" if default else "y/N"
+    while True:
+        choice = input(f"{prompt} ({default_str}): ").strip().lower()
+        if choice == '':
+            return default
+        if choice in ['y', 'yes']:
+            return True
+        if choice in ['n', 'no']:
+            return False
+        print("Please enter 'y' or 'n'")
+
+
+def main():
+    """Main program loop"""
+    print("\\n" + "="*50)
+    print("  PASSWORD GENERATOR")
+    print("="*50)
+
+    while True:
+        print("\\nPassword Options:")
+
+        # Get password length
+        while True:
+            try:
+                length = input("Password length (default 12): ").strip()
+                length = int(length) if length else 12
+                if length < 4:
+                    print("Password must be at least 4 characters long!")
+                    continue
+                break
+            except ValueError:
+                print("Please enter a valid number!")
+
+        # Get character type preferences
+        use_uppercase = get_yes_no("Include uppercase letters?", True)
+        use_lowercase = get_yes_no("Include lowercase letters?", True)
+        use_digits = get_yes_no("Include digits?", True)
+        use_special = get_yes_no("Include special characters?", True)
+
+        # Get number of passwords
+        while True:
+            try:
+                count = input("\\nHow many passwords to generate (default 1): ").strip()
+                count = int(count) if count else 1
+                if count < 1:
+                    print("Please enter a positive number!")
+                    continue
+                break
+            except ValueError:
+                print("Please enter a valid number!")
+
+        # Generate passwords
+        print("\\n" + "-"*50)
+        print("Generated Passwords:")
+        print("-"*50)
+
+        try:
+            for i in range(count):
+                password = generate_password(
+                    length, use_uppercase, use_lowercase,
+                    use_digits, use_special
+                )
+                score, strength = calculate_password_strength(password)
+                print(f"{i+1}. {password}")
+                print(f"   Strength: [{score}/5] {strength}")
+                print()
+        except ValueError as e:
+            print(f"\\nError: {e}")
+
+        # Ask to generate more
+        if not get_yes_no("\\nGenerate more passwords?", False):
+            break
+
+    print("\\nThank you for using Password Generator!\\n")
+
+
+if __name__ == "__main__":
+    main()
+'''
+        (self.project_dir / 'main.py').write_text(main_py)
+
+        # Write tests
+        test_code = '''"""Tests for Password Generator"""
+import pytest
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+import main
+
+
+def test_imports():
+    """Test that main module can be imported"""
+    assert hasattr(main, 'generate_password')
+    assert hasattr(main, 'calculate_password_strength')
+
+
+def test_generate_password_default():
+    """Test password generation with defaults"""
+    password = main.generate_password()
+    assert len(password) == 12
+    assert isinstance(password, str)
+
+
+def test_generate_password_length():
+    """Test custom password length"""
+    password = main.generate_password(length=20)
+    assert len(password) == 20
+
+
+def test_generate_password_only_lowercase():
+    """Test password with only lowercase"""
+    password = main.generate_password(
+        use_uppercase=False,
+        use_digits=False,
+        use_special=False
+    )
+    assert password.islower()
+
+
+def test_password_strength_weak():
+    """Test weak password detection"""
+    score, strength = main.calculate_password_strength("abc")
+    assert score <= 2
+
+
+def test_password_strength_strong():
+    """Test strong password detection"""
+    score, strength = main.calculate_password_strength("Abc123!@#xyz")
+    assert score >= 4
+
+
+def test_password_min_length():
+    """Test minimum password length enforcement"""
+    with pytest.raises(ValueError):
+        main.generate_password(length=2)
+'''
+        (self.project_dir / 'tests' / 'test_main.py').write_text(test_code)
+        (self.project_dir / 'tests' / '__init__.py').write_text('')
+
+        print("[OK] Generated Password Generator")
 
     def implement_bmi_calculator(self, spec: Dict):
-        print("⚠️  BMI Calculator - Implementation placeholder")
+        print("[WARN] BMI Calculator - Implementation placeholder")
         (self.project_dir / 'main.py').write_text('# TODO: Implement BMI calculator\n')
 
     def implement_digital_clock(self, spec: Dict):
-        print("⚠️  Digital Clock - Implementation placeholder")
+        print("[WARN] Digital Clock - Implementation placeholder")
         (self.project_dir / 'main.py').write_text('# TODO: Implement digital clock\n')
 
     def implement_countdown_timer(self, spec: Dict):
-        print("⚠️  Countdown Timer - Implementation placeholder")
+        print("[WARN] Countdown Timer - Implementation placeholder")
         (self.project_dir / 'main.py').write_text('# TODO: Implement countdown timer\n')
 
     def implement_expense_tracker(self, spec: Dict):
-        print("⚠️  Expense Tracker - Implementation placeholder")
+        print("[WARN] Expense Tracker - Implementation placeholder")
         (self.project_dir / 'main.py').write_text('# TODO: Implement expense tracker\n')
 
     def implement_tic_tac_toe(self, spec: Dict):
-        print("⚠️  Tic Tac Toe - Implementation placeholder")
+        print("[WARN] Tic Tac Toe - Implementation placeholder")
         (self.project_dir / 'main.py').write_text('# TODO: Implement tic tac toe\n')
 
     def create_readme(self, spec: Dict):
@@ -489,7 +714,7 @@ This project helped learn:
 '''
 
         (self.project_dir / 'README.md').write_text(readme)
-        print("✅ Generated README.md")
+        print("[OK] Generated README.md")
 
 
 def main():
