@@ -3,9 +3,9 @@
 A comprehensive list of Python projects from beginner to advanced level. Track your progress and enhance your Python skills through practical applications.
 
 ## Progress Tracking
-- [ ] Projects Completed: 1/100
-- [ ] Current Project: Number guessing game
-- [ ] Days Completed: 1/100
+- [ ] Projects Completed: 6/100
+- [ ] Current Project: Rock-Paper-Scissors game
+- [ ] Days Completed: 6/100
 
 ## Project List
 
@@ -38,8 +38,11 @@ A comprehensive list of Python projects from beginner to advanced level. Track y
    - Key concepts: Random numbers, Loops
    - Difficulty: Easy
 
-6. [ ] Rock-Paper-Scissors game
-   - Key concepts: Control flow, Random choice
+6. [x] Rock-Paper-Scissors game
+   - Status: Completed
+   - Directory: `/rock-paper-scissors`
+   - Features: Score tracking, Input validation, Multiple rounds
+   - Key concepts: Control flow, Random choice, Dictionaries
    - Difficulty: Easy
 
 7. [ ] Password generator
