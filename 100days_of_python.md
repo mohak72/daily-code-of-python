@@ -3,9 +3,9 @@
 A comprehensive list of Python projects from beginner to advanced level. Track your progress and enhance your Python skills through practical applications.
 
 ## Progress Tracking
-- [ ] Projects Completed: 6/100
+- [ ] Projects Completed: 7/100
 - [ ] Current Project: Password generator
-- [ ] Days Completed: 6/100
+- [ ] Days Completed: 7/100
 
 ## Project List
 
@@ -45,7 +45,7 @@ A comprehensive list of Python projects from beginner to advanced level. Track y
    - Key concepts: Control flow, Random choice, Dictionaries
    - Difficulty: Easy
 
-7. [ ] Password generator
+7. [x] Password generator
    - Key concepts: String manipulation, Random
    - Difficulty: Easy
 

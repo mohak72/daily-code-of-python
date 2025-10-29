@@ -1,0 +1,33 @@
+{
+  "id": 7,
+  "name": "Password generator",
+  "directory": "password-generator",
+  "difficulty": "Easy",
+  "type": "CLI",
+  "description": "Generate secure random passwords with customizable options",
+  "requirements": [
+    "Generate passwords with specified length",
+    "Include uppercase, lowercase, numbers, and special characters",
+    "Allow users to choose character types to include",
+    "Display password strength indicator",
+    "Option to generate multiple passwords at once",
+    "Copy to clipboard functionality (optional)"
+  ],
+  "features": [
+    "Password strength meter",
+    "Memorable password option (using words)",
+    "Exclude ambiguous characters option",
+    "Save to file"
+  ],
+  "tech_stack": [
+    "Python 3.8+",
+    "random module",
+    "string module"
+  ],
+  "test_cases": [
+    "Test password length validation",
+    "Test character type inclusion",
+    "Test password uniqueness",
+    "Test strength calculation"
+  ]
+}
