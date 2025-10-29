@@ -4,7 +4,7 @@ A comprehensive list of Python projects from beginner to advanced level. Track y
 
 ## Progress Tracking
 - [ ] Projects Completed: 6/100
-- [ ] Current Project: Rock-Paper-Scissors game
+- [ ] Current Project: Password generator
 - [ ] Days Completed: 6/100
 
 ## Project List
